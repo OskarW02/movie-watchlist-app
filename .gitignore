@@ -1,37 +1,39 @@
-HELP.md
+# ---- Gradle / Spring Boot ----
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### STS ###
-.apt_generated
+HELP.md
+
+# ---- Java ----
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+
+# ---- JAR / WAR ----
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ---- IDEs ----
+.idea
+*.iml
+out/
+bin/
+.vscode/
 .classpath
-.factorypath
 .project
 .settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
+# ---- NetBeans / STS ----
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
-/.nb-gradle/
-
-### VS Code ###
-.vscode/
+/.springBeans
