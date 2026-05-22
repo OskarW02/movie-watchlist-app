@@ -5,7 +5,7 @@ import MovieList from './components/MovieList.vue'
 const movies = ref([])
 
 onMounted(async () => {
-  const response = await fetch('https://movie-watchlist-app-x71j.onrender.com')
+  const response = await fetch('https://movie-watchlist-app-x71j.onrender.com/movies')
   movies.value = await response.json()
 })
 </script>
