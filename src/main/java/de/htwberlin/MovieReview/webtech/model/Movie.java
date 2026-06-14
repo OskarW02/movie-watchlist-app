@@ -13,16 +13,18 @@ public class Movie {
     private Long id;
 
     private String title;
-    private String description;
+
     private int rating;
+
+    private int releaseYear;
 
     public Movie() {
     }
 
-    public Movie(String title, String description, int rating) {
+    public Movie(String title, int rating, int releaseYear) {
         this.title = title;
-        this.description = description;
         this.rating = rating;
+        this.releaseYear = releaseYear;
     }
 
     public Long getId() {
@@ -33,12 +35,12 @@ public class Movie {
         return title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public int getRating() {
         return rating;
+    }
+
+    public int getReleaseYear() {
+        return releaseYear;
     }
 
     public void setId(Long id) {
@@ -49,11 +51,11 @@ public class Movie {
         this.title = title;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
     }
 }

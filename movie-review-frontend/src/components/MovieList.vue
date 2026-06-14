@@ -10,7 +10,7 @@ defineProps({
 
     <ul>
       <li v-for="movie in movies" :key="movie.id">
-        {{ movie.title }} ({{ movie.year }})
+        {{ movie.title }} ({{ movie.releaseYear }}) - Rating: {{ movie.rating }}/5
       </li>
     </ul>
   </div>
