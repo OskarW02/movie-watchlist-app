@@ -4,10 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "movies")
 public class Movie {
 
     @Id
@@ -15,16 +13,16 @@ public class Movie {
     private Long id;
 
     private String title;
-
-    private int year;
+    private String description;
+    private int rating;
 
     public Movie() {
     }
 
-    public Movie(Long id, String title, int year) {
-        this.id = id;
+    public Movie(String title, String description, int rating) {
         this.title = title;
-        this.year = year;
+        this.description = description;
+        this.rating = rating;
     }
 
     public Long getId() {
@@ -35,8 +33,12 @@ public class Movie {
         return title;
     }
 
-    public int getYear() {
-        return year;
+    public String getDescription() {
+        return description;
+    }
+
+    public int getRating() {
+        return rating;
     }
 
     public void setId(Long id) {
@@ -47,7 +49,11 @@ public class Movie {
         this.title = title;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }
