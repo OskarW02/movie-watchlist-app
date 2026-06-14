@@ -1,23 +1,29 @@
 package de.htwberlin.MovieReview.webtech.controller;
 
 import de.htwberlin.MovieReview.webtech.model.Movie;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import de.htwberlin.MovieReview.webtech.repository.MovieRepository;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("/movies")
 public class MovieController {
 
-    @GetMapping("/movies")
-    public List<Movie> getMovies() {
+    private final MovieRepository movieRepository;
 
-        return List.of(
-                new Movie(1L, "Inception", 2010),
-                new Movie(2L, "Interstellar", 2014),
-                new Movie(3L, "The Matrix", 1999)
-        );
+    public MovieController(MovieRepository movieRepository) {
+        this.movieRepository = movieRepository;
+    }
+
+    @GetMapping
+    public List<Movie> getMovies() {
+        return movieRepository.findAll();
+    }
+
+    @PostMapping
+    public Movie addMovie(@RequestBody Movie movie) {
+        return movieRepository.save(movie);
     }
 }
