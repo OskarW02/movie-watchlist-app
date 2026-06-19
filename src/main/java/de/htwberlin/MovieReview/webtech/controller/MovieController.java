@@ -31,4 +31,8 @@ public class MovieController {
     public void deleteMovie(@PathVariable Long id) {
         movieRepository.deleteById(id);
     }
+    @GetMapping("/ping")
+    public String ping() {
+        return "DELETE_VERSION";
+    }
 }
