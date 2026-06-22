@@ -1,3 +1,65 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import MovieList from './components/MovieList.vue'
+
+const API_URL = 'https://movie-watchlist-backend-vao3.onrender.com/movies'
+
+const movies = ref([])
+
+const newMovie = ref({
+  title: '',
+  rating: 1,
+  releaseYear: new Date().getFullYear()
+})
+
+const showRatingPopup = ref(false)
+
+const selectRating = (rating) => {
+  newMovie.value.rating = rating
+  showRatingPopup.value = false
+}
+
+const loadMovies = async () => {
+  try {
+    const response = await axios.get(API_URL)
+    movies.value = response.data
+  } catch (error) {
+    console.error('Fehler beim Laden der Filme:', error)
+  }
+}
+
+const addMovie = async () => {
+  try {
+    const response = await axios.post(API_URL, newMovie.value)
+
+    movies.value.push(response.data)
+
+    newMovie.value = {
+      title: '',
+      rating: 1,
+      releaseYear: new Date().getFullYear()
+    }
+  } catch (error) {
+    console.error('Fehler beim Speichern des Films:', error)
+  }
+}
+
+const deleteMovie = async (id) => {
+  try {
+    await axios.delete(`${API_URL}/${id}`)
+
+    movies.value = movies.value.filter(movie => movie.id !== id)
+  } catch (error) {
+    console.error('Fehler beim Löschen des Films:', error)
+  }
+}
+
+onMounted(() => {
+  loadMovies()
+})
+</script>
+
 <template>
   <div>
     <h1>Movie Review App</h1>
@@ -51,3 +113,39 @@
     />
   </div>
 </template>
+
+<style scoped>
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup {
+  background: white;
+  color: black;
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 250px;
+}
+
+.rating-options {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.rating-options button {
+  padding: 10px;
+  cursor: pointer;
+}
+</style>
