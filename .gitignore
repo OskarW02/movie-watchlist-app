@@ -37,3 +37,5 @@ bin/
 /dist/
 /nbdist/
 /.springBeans
+
+node_modules/
