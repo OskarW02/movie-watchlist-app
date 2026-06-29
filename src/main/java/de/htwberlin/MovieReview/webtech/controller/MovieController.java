@@ -8,7 +8,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(
+        origins = "*",
+        allowedHeaders = "*",
+        methods = {
+                RequestMethod.GET,
+                RequestMethod.POST,
+                RequestMethod.PUT,
+                RequestMethod.DELETE,
+                RequestMethod.OPTIONS
+        }
+)
 @RequestMapping("/movies")
 public class MovieController {
 
@@ -25,6 +35,14 @@ public class MovieController {
 
     @PostMapping
     public Movie addMovie(@RequestBody Movie movie) {
+        if (movie.getWatched() == null) {
+            movie.setWatched(false);
+        }
+
+        if (movie.getComment() == null) {
+            movie.setComment("");
+        }
+
         return movieRepository.save(movie);
     }
 
@@ -43,6 +61,7 @@ public class MovieController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
     @DeleteMapping("/{id}")
     public void deleteMovie(@PathVariable Long id) {
         movieRepository.deleteById(id);
@@ -50,6 +69,6 @@ public class MovieController {
 
     @GetMapping("/ping")
     public String ping() {
-        return "DELETE_VERSION";
+        return "UPDATE_VERSION";
     }
 }
