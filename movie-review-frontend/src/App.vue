@@ -10,8 +10,23 @@ const movies = ref([])
 const newMovie = ref({
   title: '',
   rating: 1,
-  releaseYear: new Date().getFullYear()
+  releaseYear: new Date().getFullYear(),
+  watched: false,
+  comment: ''
 })
+
+async function updateMovie(movie) {
+  try {
+    const response = await axios.put(`${API_URL}/${movie.id}`, movie)
+
+    const index = movies.value.findIndex(m => m.id === movie.id)
+    if (index !== -1) {
+      movies.value[index] = response.data
+    }
+  } catch (error) {
+    console.error('Film konnte nicht aktualisiert werden:', error)
+  }
+}
 
 const showRatingPopup = ref(false)
 
@@ -38,7 +53,9 @@ const addMovie = async () => {
     newMovie.value = {
       title: '',
       rating: 1,
-      releaseYear: new Date().getFullYear()
+      releaseYear: new Date().getFullYear(),
+      watched: false,
+      comment: ''
     }
   } catch (error) {
     console.error('Fehler beim Speichern des Films:', error)
@@ -110,6 +127,7 @@ onMounted(() => {
     <MovieList
       :movies="movies"
       @delete-movie="deleteMovie"
+      @update-movie="updateMovie"
     />
   </div>
 </template>
