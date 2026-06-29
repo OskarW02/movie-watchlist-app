@@ -141,7 +141,6 @@ onMounted(() => {
           placeholder="z. B. 8,5"
           required
         />
-      </div>
 
       <button type="submit">Film hinzufügen</button>
     </form>
