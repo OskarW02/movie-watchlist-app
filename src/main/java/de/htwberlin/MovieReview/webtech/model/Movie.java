@@ -17,7 +17,7 @@ public class Movie {
 
     private Integer releaseYear;
 
-    // Dein eigenes Rating: 0.0 bis 10.0
+    @Column(name = "user_rating")
     private Double rating;
 
     // Externes Rating, z. B. IMDb-Rating aus OMDb/TMDB
