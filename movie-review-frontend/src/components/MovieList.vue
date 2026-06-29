@@ -32,6 +32,11 @@ watch(
 function toggleWatched(movie) {
   const nextWatched = !movie.watched
 
+  if (!nextWatched) {
+    ratingDrafts[movie.id] = ''
+    commentDrafts[movie.id] = ''
+  }
+
   emit('update-movie', {
     ...movie,
     watched: nextWatched,
@@ -71,13 +76,18 @@ function saveComment(movie) {
       Noch keine Filme gespeichert.
     </p>
 
-    <ul v-else>
-      <li v-for="movie in movies" :key="movie.id">
-        <strong>{{ movie.title }}</strong>
-
-        <span v-if="movie.releaseYear">
-          ({{ movie.releaseYear }})
-        </span>
+    <ul v-else class="movie-grid">
+      <li
+        v-for="movie in movies"
+        :key="movie.id"
+        class="movie-card"
+      >
+        <h3>
+          {{ movie.title }}
+          <span v-if="movie.releaseYear">
+            ({{ movie.releaseYear }})
+          </span>
+        </h3>
 
         <p>
           Kritiker-Rating:
@@ -86,11 +96,14 @@ function saveComment(movie) {
 
         <p>
           Status:
-          {{ movie.watched ? '✅' : '❌' }}
+          {{ movie.watched ? '✅ Gesehen' : '❌ Noch nicht gesehen' }}
         </p>
 
-        <button @click="toggleWatched(movie)">
-          {{ movie.watched ? 'Als ungesehen markieren' : 'Als gesehen markieren' }}
+        <button
+          v-if="!movie.watched"
+          @click="toggleWatched(movie)"
+        >
+          Als gesehen markieren
         </button>
 
         <div v-if="movie.watched">
@@ -115,7 +128,7 @@ function saveComment(movie) {
             Bewertung speichern
           </button>
 
-          <div>
+          <div class="comment-section">
             <label>Kommentar:</label>
             <br>
 
@@ -130,12 +143,74 @@ function saveComment(movie) {
               Kommentar speichern
             </button>
           </div>
+
+          <button @click="toggleWatched(movie)">
+            Als ungesehen markieren
+          </button>
         </div>
 
-        <button @click="emit('delete-movie', movie.id)">
+        <button
+          class="delete-button"
+          @click="emit('delete-movie', movie.id)"
+        >
           Löschen
         </button>
       </li>
     </ul>
   </div>
 </template>
+
+<style scoped>
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.movie-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.movie-card h3 {
+  margin-top: 0;
+}
+
+.movie-card button {
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.comment-section {
+  margin-top: 12px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 80px;
+  margin-top: 6px;
+}
+
+input {
+  margin-top: 6px;
+}
+
+.delete-button {
+  margin-top: 12px;
+}
+
+@media (max-width: 900px) {
+  .movie-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .movie-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
