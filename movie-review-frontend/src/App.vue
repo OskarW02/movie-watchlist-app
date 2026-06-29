@@ -148,16 +148,9 @@ const addMovie = async () => {
 
 async function updateMovie(movie) {
   try {
-    const parsedRating = parseRating(movie.rating)
-
-    if (movie.watched && parsedRating === null) {
-      alert('Bitte gib eine Bewertung zwischen 0 und 10 ein.')
-      return
-    }
-
     const movieToUpdate = {
       ...movie,
-      rating: movie.watched ? parsedRating : null
+      rating: parseRating(movie.rating)
     }
 
     const response = await axios.put(`${API_URL}/${movie.id}`, movieToUpdate)
