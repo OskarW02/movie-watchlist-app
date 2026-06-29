@@ -53,6 +53,8 @@ public class MovieController {
                     movie.setTitle(updatedMovie.getTitle());
                     movie.setRating(updatedMovie.getRating());
                     movie.setReleaseYear(updatedMovie.getReleaseYear());
+                    movie.setCriticRating(updatedMovie.getCriticRating());
+                    movie.setExternalId(updatedMovie.getExternalId());
                     movie.setWatched(updatedMovie.getWatched());
                     movie.setComment(updatedMovie.getComment());
 

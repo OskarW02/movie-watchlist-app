@@ -9,8 +9,10 @@ const movies = ref([])
 
 const newMovie = ref({
   title: '',
-  rating: 1,
-  releaseYear: new Date().getFullYear(),
+  rating: 0.0,
+  releaseYear: null,
+  criticRating: null,
+  externalId: '',
   watched: false,
   comment: ''
 })
@@ -64,8 +66,10 @@ const addMovie = async () => {
 
     newMovie.value = {
       title: '',
-      rating: 1,
-      releaseYear: new Date().getFullYear(),
+      rating: 0.0,
+      releaseYear: null,
+      criticRating: null,
+      externalId: '',
       watched: false,
       comment: ''
     }
@@ -105,11 +109,15 @@ onMounted(() => {
       </div>
 
       <div>
-        <label>Rating:</label>
-
-        <button type="button" @click="showRatingPopup = true">
-          {{ newMovie.rating }} / 5 ⭐
-        </button>
+        <label>Dein Rating:</label>
+        <input
+          v-model.number="newMovie.rating"
+          type="number"
+          min="0"
+          max="10"
+          step="0.1"
+          required
+        />
       </div>
 
       <button type="submit">Film hinzufügen</button>

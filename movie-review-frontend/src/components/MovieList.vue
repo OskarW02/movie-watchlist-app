@@ -51,7 +51,14 @@ function saveComment(movie) {
       <li v-for="movie in movies" :key="movie.id">
         <strong>{{ movie.title }}</strong>
         ({{ movie.releaseYear }}) -
-        Rating: {{ movie.rating }}/5
+
+        <p>
+          Dein Rating: {{ movie.rating ?? 'Noch nicht bewertet' }}/10
+        </p>
+
+        <p>
+          Kritiker-Rating: {{ movie.criticRating ?? 'Noch nicht vorhanden' }}/10
+        </p>
 
         <p>
           Status: {{ movie.watched ? 'Gesehen' : 'Noch nicht gesehen' }}

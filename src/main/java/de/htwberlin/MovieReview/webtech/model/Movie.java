@@ -1,10 +1,10 @@
 package de.htwberlin.MovieReview.webtech.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Column;
 
 @Entity
 public class Movie {
@@ -15,9 +15,16 @@ public class Movie {
 
     private String title;
 
-    private int rating;
+    private Integer releaseYear;
 
-    private int releaseYear;
+    // Dein eigenes Rating: 0.0 bis 10.0
+    private Double rating;
+
+    // Externes Rating, z. B. IMDb-Rating aus OMDb/TMDB
+    private Double criticRating;
+
+    // Externe Film-ID, z. B. IMDb-ID wie "tt0816692"
+    private String externalId;
 
     private Boolean watched = false;
 
@@ -27,10 +34,14 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(String title, int rating, int releaseYear) {
+    public Movie(String title, Integer releaseYear, Double rating, Double criticRating, String externalId, Boolean watched, String comment) {
         this.title = title;
-        this.rating = rating;
         this.releaseYear = releaseYear;
+        this.rating = rating;
+        this.criticRating = criticRating;
+        this.externalId = externalId;
+        this.watched = watched;
+        this.comment = comment;
     }
 
     public Long getId() {
@@ -41,12 +52,28 @@ public class Movie {
         return title;
     }
 
-    public int getRating() {
+    public Integer getReleaseYear() {
+        return releaseYear;
+    }
+
+    public Double getRating() {
         return rating;
     }
 
-    public int getReleaseYear() {
-        return releaseYear;
+    public Double getCriticRating() {
+        return criticRating;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public Boolean getWatched() {
+        return watched;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public void setId(Long id) {
@@ -57,24 +84,24 @@ public class Movie {
         this.title = title;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public void setReleaseYear(int releaseYear) {
+    public void setReleaseYear(Integer releaseYear) {
         this.releaseYear = releaseYear;
     }
 
-    public Boolean getWatched() {
-        return watched;
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public void setCriticRating(Double criticRating) {
+        this.criticRating = criticRating;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public void setWatched(Boolean watched) {
         this.watched = watched;
-    }
-
-    public String getComment() {
-        return comment;
     }
 
     public void setComment(String comment) {
