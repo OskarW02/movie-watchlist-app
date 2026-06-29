@@ -36,7 +36,14 @@ async function updateMovie(movie) {
     }
   } catch (error) {
     console.error('Film konnte nicht aktualisiert werden:', error)
-    alert('Film konnte nicht aktualisiert werden. Prüfe Backend/Render-Deploy.')
+
+    if (error.response) {
+      console.error('Status:', error.response.status)
+      console.error('Backend Antwort:', error.response.data)
+      alert(`Update fehlgeschlagen. Status: ${error.response.status}`)
+    } else {
+      alert('Update fehlgeschlagen. Keine Antwort vom Backend.')
+    }
   }
 }
 
