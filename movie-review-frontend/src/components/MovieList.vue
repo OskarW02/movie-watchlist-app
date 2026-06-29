@@ -53,7 +53,7 @@ function saveComment(movie) {
         ({{ movie.releaseYear }}) -
 
         <p>
-          Dein Rating: {{ movie.rating ?? 'Noch nicht bewertet' }}
+          Dein Rating: {{ movie.rating }}
         </p>
 
         <p>

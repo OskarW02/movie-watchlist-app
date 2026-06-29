@@ -9,8 +9,8 @@ const movies = ref([])
 
 const newMovie = ref({
   title: '',
-  rating: '',
-  releaseYear: null,
+  rating: '0.0',
+  releaseYear: new Date().getFullYear(),
   criticRating: null,
   externalId: '',
   watched: false,
@@ -62,7 +62,8 @@ const addMovie = async () => {
   try {
     const movieToSave = {
       ...newMovie.value,
-      rating: parseRating(newMovie.value.rating)
+      rating: parseRating(newMovie.value.rating),
+      releaseYear: Number(newMovie.value.releaseYear)
     }
 
     const response = await axios.post(API_URL, movieToSave)
@@ -71,8 +72,8 @@ const addMovie = async () => {
 
     newMovie.value = {
       title: '',
-      rating: '',
-      releaseYear: null,
+      rating: '0.0',
+      releaseYear: new Date().getFullYear(),
       criticRating: null,
       externalId: '',
       watched: false,
@@ -80,6 +81,14 @@ const addMovie = async () => {
     }
   } catch (error) {
     console.error('Fehler beim Speichern des Films:', error)
+
+    if (error.response) {
+      console.error('Status:', error.response.status)
+      console.error('Backend Antwort:', error.response.data)
+      alert(`Film konnte nicht gespeichert werden. Status: ${error.response.status}`)
+    } else {
+      alert('Film konnte nicht gespeichert werden. Keine Antwort vom Backend.')
+    }
   }
 }
 
@@ -91,6 +100,16 @@ const deleteMovie = async (id) => {
   } catch (error) {
     console.error('Fehler beim Löschen des Films:', error)
   }
+}
+
+function parseRating(value) {
+  const number = Number(String(value).replace(',', '.'))
+
+  if (Number.isNaN(number)) {
+    return 0.0
+  }
+
+  return Math.round(number * 10) / 10
 }
 
 onMounted(() => {
