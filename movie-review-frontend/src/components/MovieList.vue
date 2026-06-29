@@ -35,7 +35,8 @@ function toggleWatched(movie) {
   emit('update-movie', {
     ...movie,
     watched: nextWatched,
-    rating: nextWatched ? movie.rating : null
+    rating: nextWatched ? movie.rating : null,
+    comment: nextWatched ? movie.comment : ''
   })
 }
 
@@ -64,7 +65,7 @@ function saveComment(movie) {
 
 <template>
   <div>
-    <h2>Movie List</h2>
+    <h2>Watchlist</h2>
 
     <p v-if="movies.length === 0">
       Noch keine Filme gespeichert.
@@ -85,12 +86,7 @@ function saveComment(movie) {
 
         <p>
           Status:
-          {{ movie.watched ? 'Gesehen' : 'Noch nicht gesehen' }}
-        </p>
-
-        <p v-if="movie.watched">
-          Deine Bewertung:
-          {{ movie.rating ?? 'Noch nicht bewertet' }}
+          {{ movie.watched ? '✅' : '❌' }}
         </p>
 
         <button @click="toggleWatched(movie)">
@@ -98,6 +94,11 @@ function saveComment(movie) {
         </button>
 
         <div v-if="movie.watched">
+          <p>
+            Deine Bewertung:
+            {{ movie.rating ?? 'Noch nicht bewertet' }}
+          </p>
+
           <label>Eigene Bewertung:</label>
           <br>
 
@@ -113,22 +114,22 @@ function saveComment(movie) {
           <button @click="saveRating(movie)">
             Bewertung speichern
           </button>
-        </div>
 
-        <div>
-          <label>Kommentar:</label>
-          <br>
+          <div>
+            <label>Kommentar:</label>
+            <br>
 
-          <textarea
-            v-model="commentDrafts[movie.id]"
-            placeholder="Kommentar schreiben..."
-          ></textarea>
+            <textarea
+              v-model="commentDrafts[movie.id]"
+              placeholder="Kommentar schreiben..."
+            ></textarea>
 
-          <br>
+            <br>
 
-          <button @click="saveComment(movie)">
-            Kommentar speichern
-          </button>
+            <button @click="saveComment(movie)">
+              Kommentar speichern
+            </button>
+          </div>
         </div>
 
         <button @click="emit('delete-movie', movie.id)">
