@@ -9,7 +9,7 @@ const movies = ref([])
 
 const newMovie = ref({
   title: '',
-  rating: 0.0,
+  rating: '',
   releaseYear: null,
   criticRating: null,
   externalId: '',
@@ -60,13 +60,18 @@ const loadMovies = async () => {
 
 const addMovie = async () => {
   try {
-    const response = await axios.post(API_URL, newMovie.value)
+    const movieToSave = {
+      ...newMovie.value,
+      rating: parseRating(newMovie.value.rating)
+    }
+
+    const response = await axios.post(API_URL, movieToSave)
 
     movies.value.push(response.data)
 
     newMovie.value = {
       title: '',
-      rating: 0.0,
+      rating: '',
       releaseYear: null,
       criticRating: null,
       externalId: '',
@@ -111,11 +116,10 @@ onMounted(() => {
       <div>
         <label>Dein Rating:</label>
         <input
-          v-model.number="newMovie.rating"
-          type="number"
-          min="0"
-          max="10"
-          step="0.1"
+          v-model="newMovie.rating"
+          type="text"
+          inputmode="decimal"
+          placeholder="z. B. 8,5"
           required
         />
       </div>
