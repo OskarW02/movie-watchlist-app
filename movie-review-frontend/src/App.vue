@@ -14,7 +14,7 @@ let latestSearchId = 0
 
 const newMovie = ref({
   title: '',
-  rating: '0.0',
+  rating: null,
   releaseYear: null,
   criticRating: null,
   externalId: '',
@@ -23,10 +23,18 @@ const newMovie = ref({
 })
 
 function parseRating(value) {
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+
   const number = Number(String(value).replace(',', '.'))
 
   if (Number.isNaN(number)) {
-    return 0.0
+    return null
+  }
+
+  if (number < 0 || number > 10) {
+    return null
   }
 
   return Math.round(number * 10) / 10
@@ -105,9 +113,9 @@ const addMovie = async () => {
   try {
     const movieToSave = {
       ...newMovie.value,
-      rating: parseRating(newMovie.value.rating)
+      rating: null,
+      watched: false
     }
-
     const response = await axios.post(API_URL, movieToSave)
 
     movies.value.push(response.data)
@@ -117,13 +125,14 @@ const addMovie = async () => {
 
     newMovie.value = {
       title: '',
-      rating: '0.0',
+      rating: null,
       releaseYear: null,
       criticRating: null,
       externalId: '',
       watched: false,
       comment: ''
     }
+
   } catch (error) {
     console.error('Fehler beim Speichern des Films:', error)
 
@@ -139,9 +148,16 @@ const addMovie = async () => {
 
 async function updateMovie(movie) {
   try {
+    const parsedRating = parseRating(movie.rating)
+
+    if (movie.watched && parsedRating === null) {
+      alert('Bitte gib eine Bewertung zwischen 0 und 10 ein.')
+      return
+    }
+
     const movieToUpdate = {
       ...movie,
-      rating: parseRating(movie.rating)
+      rating: movie.watched ? parsedRating : null
     }
 
     const response = await axios.put(`${API_URL}/${movie.id}`, movieToUpdate)

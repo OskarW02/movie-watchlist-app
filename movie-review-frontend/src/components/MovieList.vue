@@ -11,6 +11,7 @@ const props = defineProps({
 const emit = defineEmits(['delete-movie', 'update-movie'])
 
 const commentDrafts = reactive({})
+const ratingDrafts = reactive({})
 
 watch(
   () => props.movies,
@@ -19,15 +20,37 @@ watch(
       if (commentDrafts[movie.id] === undefined) {
         commentDrafts[movie.id] = movie.comment || ''
       }
+
+      if (ratingDrafts[movie.id] === undefined) {
+        ratingDrafts[movie.id] = movie.rating ?? ''
+      }
     })
   },
   { immediate: true }
 )
 
 function toggleWatched(movie) {
+  const nextWatched = !movie.watched
+
   emit('update-movie', {
     ...movie,
-    watched: !movie.watched
+    watched: nextWatched,
+    rating: nextWatched ? movie.rating : null
+  })
+}
+
+function saveRating(movie) {
+  const ratingText = String(ratingDrafts[movie.id]).replace(',', '.')
+  const rating = Number(ratingText)
+
+  if (Number.isNaN(rating) || rating < 0 || rating > 10) {
+    alert('Bitte gib eine Bewertung zwischen 0 und 10 ein.')
+    return
+  }
+
+  emit('update-movie', {
+    ...movie,
+    rating: Math.round(rating * 10) / 10
   })
 }
 
@@ -50,34 +73,58 @@ function saveComment(movie) {
     <ul v-else>
       <li v-for="movie in movies" :key="movie.id">
         <strong>{{ movie.title }}</strong>
-        ({{ movie.releaseYear }}) -
+
+        <span v-if="movie.releaseYear">
+          ({{ movie.releaseYear }})
+        </span>
 
         <p>
-          Dein Rating: {{ movie.rating }}
+          Kritiker-Rating:
+          {{ movie.criticRating ?? 'Nicht vorhanden' }}
         </p>
 
         <p>
-          Kritiker-Rating: {{ movie.criticRating ?? 'Noch nicht vorhanden' }}
+          Status:
+          {{ movie.watched ? 'Gesehen' : 'Noch nicht gesehen' }}
         </p>
 
-        <p>
-          Status: {{ movie.watched ? 'Gesehen' : 'Noch nicht gesehen' }}
+        <p v-if="movie.watched">
+          Deine Bewertung:
+          {{ movie.rating ?? 'Noch nicht bewertet' }}
         </p>
 
         <button @click="toggleWatched(movie)">
           {{ movie.watched ? 'Als ungesehen markieren' : 'Als gesehen markieren' }}
         </button>
 
+        <div v-if="movie.watched">
+          <label>Eigene Bewertung:</label>
+          <br>
+
+          <input
+            v-model="ratingDrafts[movie.id]"
+            type="text"
+            inputmode="decimal"
+            placeholder="z. B. 8,5"
+          >
+
+          <br>
+
+          <button @click="saveRating(movie)">
+            Bewertung speichern
+          </button>
+        </div>
+
         <div>
           <label>Kommentar:</label>
-          <br />
+          <br>
 
           <textarea
             v-model="commentDrafts[movie.id]"
             placeholder="Kommentar schreiben..."
           ></textarea>
 
-          <br />
+          <br>
 
           <button @click="saveComment(movie)">
             Kommentar speichern
