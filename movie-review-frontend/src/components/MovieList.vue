@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { reactive, watch } from 'vue'
+
+const props = defineProps({
   movies: {
     type: Array,
     required: true
@@ -8,6 +10,20 @@ defineProps({
 
 const emit = defineEmits(['delete-movie', 'update-movie'])
 
+const commentDrafts = reactive({})
+
+watch(
+  () => props.movies,
+  (movies) => {
+    movies.forEach((movie) => {
+      if (commentDrafts[movie.id] === undefined) {
+        commentDrafts[movie.id] = movie.comment || ''
+      }
+    })
+  },
+  { immediate: true }
+)
+
 function toggleWatched(movie) {
   emit('update-movie', {
     ...movie,
@@ -15,10 +31,10 @@ function toggleWatched(movie) {
   })
 }
 
-function updateComment(movie, event) {
+function saveComment(movie) {
   emit('update-movie', {
     ...movie,
-    comment: event.target.value
+    comment: commentDrafts[movie.id] || ''
   })
 }
 </script>
@@ -38,8 +54,7 @@ function updateComment(movie, event) {
         Rating: {{ movie.rating }}/5
 
         <p>
-          Status:
-          {{ movie.watched ? 'Gesehen' : 'Noch nicht gesehen' }}
+          Status: {{ movie.watched ? 'Gesehen' : 'Noch nicht gesehen' }}
         </p>
 
         <button @click="toggleWatched(movie)">
@@ -49,11 +64,17 @@ function updateComment(movie, event) {
         <div>
           <label>Kommentar:</label>
           <br />
+
           <textarea
-            :value="movie.comment || ''"
+            v-model="commentDrafts[movie.id]"
             placeholder="Kommentar schreiben..."
-            @blur="updateComment(movie, $event)"
           ></textarea>
+
+          <br />
+
+          <button @click="saveComment(movie)">
+            Kommentar speichern
+          </button>
         </div>
 
         <button @click="emit('delete-movie', movie.id)">

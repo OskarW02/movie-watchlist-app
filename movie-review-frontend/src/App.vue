@@ -15,9 +15,20 @@ const newMovie = ref({
   comment: ''
 })
 
+const showRatingPopup = ref(false)
+
+const selectRating = (rating) => {
+  newMovie.value.rating = rating
+  showRatingPopup.value = false
+}
+
 async function updateMovie(movie) {
+  console.log('Update wird gesendet:', movie)
+
   try {
     const response = await axios.put(`${API_URL}/${movie.id}`, movie)
+
+    console.log('Update erfolgreich:', response.data)
 
     const index = movies.value.findIndex(m => m.id === movie.id)
     if (index !== -1) {
@@ -25,14 +36,8 @@ async function updateMovie(movie) {
     }
   } catch (error) {
     console.error('Film konnte nicht aktualisiert werden:', error)
+    alert('Film konnte nicht aktualisiert werden. Prüfe Backend/Render-Deploy.')
   }
-}
-
-const showRatingPopup = ref(false)
-
-const selectRating = (rating) => {
-  newMovie.value.rating = rating
-  showRatingPopup.value = false
 }
 
 const loadMovies = async () => {

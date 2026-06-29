@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 
 @Entity
 public class Movie {
@@ -17,6 +18,11 @@ public class Movie {
     private int rating;
 
     private int releaseYear;
+
+    private Boolean watched = false;
+
+    @Column(length = 1000)
+    private String comment;
 
     public Movie() {
     }
@@ -57,5 +63,21 @@ public class Movie {
 
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
+    }
+
+    public Boolean getWatched() {
+        return watched;
+    }
+
+    public void setWatched(Boolean watched) {
+        this.watched = watched;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
