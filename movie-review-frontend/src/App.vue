@@ -4,13 +4,16 @@ import axios from 'axios'
 import MovieList from './components/MovieList.vue'
 
 const API_URL = 'https://movie-watchlist-backend-vao3.onrender.com/movies'
+const EXTERNAL_MOVIES_URL = 'https://movie-watchlist-backend-vao3.onrender.com/external-movies'
 
 const movies = ref([])
+const movieSearch = ref('')
+const suggestions = ref([])
 
 const newMovie = ref({
   title: '',
   rating: '0.0',
-  releaseYear: new Date().getFullYear(),
+  releaseYear: null,
   criticRating: null,
   externalId: '',
   watched: false,
@@ -36,22 +39,69 @@ const loadMovies = async () => {
   }
 }
 
+const searchExternalMovies = async () => {
+  const query = movieSearch.value.trim()
+
+  if (query.length < 2) {
+    suggestions.value = []
+    return
+  }
+
+  try {
+    const response = await axios.get(`${EXTERNAL_MOVIES_URL}/search`, {
+      params: {
+        title: query
+      }
+    })
+
+    suggestions.value = response.data
+  } catch (error) {
+    console.error('Fehler bei der Filmsuche:', error)
+    suggestions.value = []
+  }
+}
+
+const selectSuggestion = async (suggestion) => {
+  try {
+    const response = await axios.get(`${EXTERNAL_MOVIES_URL}/${suggestion.externalId}`)
+    const details = response.data
+
+    newMovie.value.title = details.title
+    newMovie.value.releaseYear = details.releaseYear
+    newMovie.value.criticRating = details.criticRating
+    newMovie.value.externalId = details.externalId
+
+    movieSearch.value = `${details.title} (${details.releaseYear ?? 'Jahr unbekannt'})`
+    suggestions.value = []
+  } catch (error) {
+    console.error('Fehler beim Laden der Filmdetails:', error)
+    alert('Filmdetails konnten nicht geladen werden.')
+  }
+}
+
 const addMovie = async () => {
+  if (!newMovie.value.externalId) {
+    alert('Bitte wähle zuerst einen Film aus den Vorschlägen aus.')
+    return
+  }
+
   try {
     const movieToSave = {
       ...newMovie.value,
-      rating: parseRating(newMovie.value.rating),
-      releaseYear: Number(newMovie.value.releaseYear)
+      rating: parseRating(newMovie.value.rating)
     }
 
     const response = await axios.post(API_URL, movieToSave)
 
     movies.value.push(response.data)
 
+    movieSearch.value = ''
+    suggestions.value = []
+
     newMovie.value = {
       title: '',
       rating: '0.0',
-      releaseYear: new Date().getFullYear(),
+      releaseYear: null,
       criticRating: null,
       externalId: '',
       watched: false,
@@ -71,8 +121,6 @@ const addMovie = async () => {
 }
 
 async function updateMovie(movie) {
-  console.log('Update wird gesendet:', movie)
-
   try {
     const movieToUpdate = {
       ...movie,
@@ -80,8 +128,6 @@ async function updateMovie(movie) {
     }
 
     const response = await axios.put(`${API_URL}/${movie.id}`, movieToUpdate)
-
-    console.log('Update erfolgreich:', response.data)
 
     const index = movies.value.findIndex(m => m.id === movie.id)
     if (index !== -1) {
@@ -120,13 +166,43 @@ onMounted(() => {
 
     <form @submit.prevent="addMovie">
       <div>
-        <label>Titel:</label>
-        <input v-model="newMovie.title" type="text" required>
+        <label>Film suchen:</label>
+        <input
+          v-model="movieSearch"
+          type="text"
+          placeholder="z. B. Interstellar"
+          @input="searchExternalMovies"
+        >
       </div>
 
-      <div>
-        <label>Release Year:</label>
-        <input v-model.number="newMovie.releaseYear" type="number" required>
+      <ul v-if="suggestions.length > 0">
+        <li
+          v-for="suggestion in suggestions"
+          :key="suggestion.externalId"
+        >
+          <button
+            type="button"
+            @click="selectSuggestion(suggestion)"
+          >
+            {{ suggestion.title }}
+            ({{ suggestion.releaseYear ?? 'Jahr unbekannt' }})
+          </button>
+        </li>
+      </ul>
+
+      <div v-if="newMovie.title">
+        <p>
+          Ausgewählt:
+          <strong>{{ newMovie.title }}</strong>
+          <span v-if="newMovie.releaseYear">
+            ({{ newMovie.releaseYear }})
+          </span>
+        </p>
+
+        <p>
+          Kritiker-Rating:
+          {{ newMovie.criticRating ?? 'Nicht vorhanden' }}
+        </p>
       </div>
 
       <div>
@@ -162,6 +238,15 @@ form div {
 
 input {
   margin-left: 8px;
+}
+
+ul {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+li {
+  margin-bottom: 6px;
 }
 
 button {
