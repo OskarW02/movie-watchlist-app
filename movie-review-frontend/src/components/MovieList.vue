@@ -177,8 +177,8 @@ function saveComment(movie) {
 <style scoped>
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, minmax(360px, 1fr));
+  gap: 24px;
   padding: 0;
   list-style: none;
 }
@@ -238,13 +238,13 @@ input {
   margin-top: 12px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .movie-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 750px) {
   .movie-grid {
     grid-template-columns: 1fr;
   }
