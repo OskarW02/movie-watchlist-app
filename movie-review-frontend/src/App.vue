@@ -114,7 +114,8 @@ const addMovie = async () => {
     const movieToSave = {
       ...newMovie.value,
       rating: null,
-      watched: false
+      watched: false,
+      comment: ''
     }
     const response = await axios.post(API_URL, movieToSave)
 
@@ -229,17 +230,6 @@ onMounted(() => {
           Kritiker-Rating:
           {{ newMovie.criticRating ?? 'Nicht vorhanden' }}
         </p>
-      </div>
-
-      <div>
-        <label>Dein Rating:</label>
-        <input
-          v-model="newMovie.rating"
-          type="text"
-          inputmode="decimal"
-          placeholder="z. B. 8,5"
-          required
-        >
       </div>
 
       <button type="submit">Film hinzufügen</button>
