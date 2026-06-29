@@ -195,7 +195,7 @@ function saveComment(movie) {
 
 .movie-poster {
   width: 100%;
-  height: 360px;
+  height: 460px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 12px;
@@ -204,7 +204,7 @@ function saveComment(movie) {
 
 .poster-placeholder {
   width: 100%;
-  height: 360px;
+  height: 460px;
   border-radius: 8px;
   margin-bottom: 12px;
   background: #eee;
