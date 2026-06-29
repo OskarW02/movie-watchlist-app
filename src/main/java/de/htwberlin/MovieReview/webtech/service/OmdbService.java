@@ -25,9 +25,10 @@ public class OmdbService {
                 .queryParam("apikey", apiKey)
                 .queryParam("s", title)
                 .queryParam("type", "movie")
+                .build()
                 .toUriString();
 
-        Map response = restTemplate.getForObject(url, Map.class);
+        Map<?, ?> response = restTemplate.getForObject(url, Map.class);
 
         List<MovieSuggestion> suggestions = new ArrayList<>();
 
@@ -35,20 +36,26 @@ public class OmdbService {
             return suggestions;
         }
 
-        List<Map<String, Object>> searchResults = (List<Map<String, Object>>) response.get("Search");
+        Object searchObject = response.get("Search");
 
-        if (searchResults == null) {
+        if (!(searchObject instanceof List<?> searchResults)) {
             return suggestions;
         }
 
-        for (Map<String, Object> result : searchResults) {
-            String movieTitle = (String) result.get("Title");
-            String yearText = (String) result.get("Year");
-            String imdbId = (String) result.get("imdbID");
+        for (Object item : searchResults) {
+            if (!(item instanceof Map<?, ?> result)) {
+                continue;
+            }
 
-            Integer releaseYear = parseYear(yearText);
+            String movieTitle = getString(result, "Title");
+            String yearText = getString(result, "Year");
+            String imdbId = getString(result, "imdbID");
 
-            suggestions.add(new MovieSuggestion(movieTitle, releaseYear, imdbId));
+            suggestions.add(new MovieSuggestion(
+                    movieTitle,
+                    parseYear(yearText),
+                    imdbId
+            ));
         }
 
         return suggestions;
@@ -60,23 +67,44 @@ public class OmdbService {
                 .queryParam("apikey", apiKey)
                 .queryParam("i", externalId)
                 .queryParam("type", "movie")
+                .build()
                 .toUriString();
 
-        Map response = restTemplate.getForObject(url, Map.class);
+        Map<?, ?> response = restTemplate.getForObject(url, Map.class);
 
         if (response == null || !"True".equals(response.get("Response"))) {
             return null;
         }
 
-        String title = (String) response.get("Title");
-        String yearText = (String) response.get("Year");
-        String imdbRatingText = (String) response.get("imdbRating");
-        String imdbId = (String) response.get("imdbID");
+        String title = getString(response, "Title");
+        String yearText = getString(response, "Year");
+        String imdbRatingText = getString(response, "imdbRating");
+        String imdbId = getString(response, "imdbID");
+        String posterUrl = getString(response, "Poster");
 
-        Integer releaseYear = parseYear(yearText);
-        Double criticRating = parseDouble(imdbRatingText);
+        return new MovieDetails(
+                title,
+                parseYear(yearText),
+                parseDouble(imdbRatingText),
+                imdbId,
+                posterUrl
+        );
+    }
 
-        return new MovieDetails(title, releaseYear, criticRating, imdbId);
+    private String getString(Map<?, ?> map, String key) {
+        Object value = map.get(key);
+
+        if (value == null) {
+            return null;
+        }
+
+        String text = String.valueOf(value);
+
+        if (text.equalsIgnoreCase("N/A") || text.equalsIgnoreCase("null")) {
+            return null;
+        }
+
+        return text;
     }
 
     private Integer parseYear(String yearText) {
@@ -92,7 +120,7 @@ public class OmdbService {
     }
 
     private Double parseDouble(String value) {
-        if (value == null || value.equalsIgnoreCase("N/A")) {
+        if (value == null) {
             return null;
         }
 

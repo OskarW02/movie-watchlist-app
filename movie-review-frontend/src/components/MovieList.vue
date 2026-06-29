@@ -89,6 +89,20 @@ function saveComment(movie) {
           </span>
         </h3>
 
+        <img
+          v-if="movie.posterUrl"
+          :src="movie.posterUrl"
+          :alt="movie.title"
+          class="movie-poster"
+        >
+
+        <div
+          v-else
+          class="poster-placeholder"
+        >
+          Kein Bild vorhanden
+        </div>
+
         <p>
           Kritiker-Rating:
           {{ movie.criticRating ?? 'Nicht vorhanden' }}
@@ -179,6 +193,27 @@ function saveComment(movie) {
   margin-top: 0;
 }
 
+.movie-poster {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: #eee;
+}
+
+.poster-placeholder {
+  width: 100%;
+  height: 360px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
 .movie-card button {
   margin-top: 8px;
   cursor: pointer;
@@ -192,6 +227,7 @@ textarea {
   width: 100%;
   min-height: 80px;
   margin-top: 6px;
+  box-sizing: border-box;
 }
 
 input {

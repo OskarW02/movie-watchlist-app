@@ -57,6 +57,7 @@ public class MovieController {
                     movie.setExternalId(updatedMovie.getExternalId());
                     movie.setWatched(updatedMovie.getWatched());
                     movie.setComment(updatedMovie.getComment());
+                    movie.setPosterUrl(updatedMovie.getPosterUrl());
 
                     Movie savedMovie = movieRepository.save(movie);
                     return ResponseEntity.ok(savedMovie);

@@ -20,6 +20,8 @@ public class Movie {
     @Column(name = "user_rating")
     private Double rating;
 
+    private String posterUrl;
+
     // Externes Rating, z. B. IMDb-Rating aus OMDb/TMDB
     private Double criticRating;
 
@@ -106,5 +108,13 @@ public class Movie {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
 }

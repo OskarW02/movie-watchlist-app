@@ -6,15 +6,17 @@ public class MovieDetails {
     private Integer releaseYear;
     private Double criticRating;
     private String externalId;
+    private String posterUrl;
 
     public MovieDetails() {
     }
 
-    public MovieDetails(String title, Integer releaseYear, Double criticRating, String externalId) {
+    public MovieDetails(String title, Integer releaseYear, Double criticRating, String externalId, String posterUrl) {
         this.title = title;
         this.releaseYear = releaseYear;
         this.criticRating = criticRating;
         this.externalId = externalId;
+        this.posterUrl = posterUrl;
     }
 
     public String getTitle() {
@@ -47,5 +49,13 @@ public class MovieDetails {
 
     public void setExternalId(String externalId) {
         this.externalId = externalId;
+    }
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
 }

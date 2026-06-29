@@ -9,6 +9,7 @@ const EXTERNAL_MOVIES_URL = 'https://movie-watchlist-backend-vao3.onrender.com/e
 const movies = ref([])
 const movieSearch = ref('')
 const suggestions = ref([])
+
 let searchTimeout = null
 let latestSearchId = 0
 
@@ -18,6 +19,7 @@ const newMovie = ref({
   releaseYear: null,
   criticRating: null,
   externalId: '',
+  posterUrl: null,
   watched: false,
   comment: ''
 })
@@ -95,6 +97,7 @@ const selectSuggestion = async (suggestion) => {
     newMovie.value.releaseYear = details.releaseYear
     newMovie.value.criticRating = details.criticRating
     newMovie.value.externalId = details.externalId
+    newMovie.value.posterUrl = details.posterUrl
 
     movieSearch.value = `${details.title} (${details.releaseYear ?? 'Jahr unbekannt'})`
     suggestions.value = []
@@ -117,6 +120,7 @@ const addMovie = async () => {
       watched: false,
       comment: ''
     }
+
     const response = await axios.post(API_URL, movieToSave)
 
     movies.value.push(response.data)
@@ -130,10 +134,10 @@ const addMovie = async () => {
       releaseYear: null,
       criticRating: null,
       externalId: '',
+      posterUrl: null,
       watched: false,
       comment: ''
     }
-
   } catch (error) {
     console.error('Fehler beim Speichern des Films:', error)
 
@@ -188,10 +192,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="app">
     <h1>Movie Review App</h1>
 
-    <form @submit.prevent="addMovie">
+    <form @submit.prevent="addMovie" class="add-form">
       <div>
         <label>Film suchen:</label>
         <input
@@ -202,7 +206,7 @@ onMounted(() => {
         >
       </div>
 
-      <ul v-if="suggestions.length > 0">
+      <ul v-if="suggestions.length > 0" class="suggestions">
         <li
           v-for="suggestion in suggestions"
           :key="suggestion.externalId"
@@ -217,22 +221,33 @@ onMounted(() => {
         </li>
       </ul>
 
-      <div v-if="newMovie.title">
-        <p>
-          Ausgewählt:
-          <strong>{{ newMovie.title }}</strong>
-          <span v-if="newMovie.releaseYear">
-            ({{ newMovie.releaseYear }})
-          </span>
-        </p>
+      <div v-if="newMovie.title" class="selected-movie">
+        <img
+          v-if="newMovie.posterUrl"
+          :src="newMovie.posterUrl"
+          :alt="newMovie.title"
+          class="selected-poster"
+        >
 
-        <p>
-          Kritiker-Rating:
-          {{ newMovie.criticRating ?? 'Nicht vorhanden' }}
-        </p>
+        <div>
+          <p>
+            Ausgewählt:
+            <strong>{{ newMovie.title }}</strong>
+            <span v-if="newMovie.releaseYear">
+              ({{ newMovie.releaseYear }})
+            </span>
+          </p>
+
+          <p>
+            Kritiker-Rating:
+            {{ newMovie.criticRating ?? 'Nicht vorhanden' }}
+          </p>
+        </div>
       </div>
 
-      <button type="submit">Film hinzufügen</button>
+      <button type="submit">
+        Zur Watchlist hinzufügen
+      </button>
     </form>
 
     <MovieList
@@ -244,11 +259,17 @@ onMounted(() => {
 </template>
 
 <style scoped>
-form {
-  margin-bottom: 24px;
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
 }
 
-form div {
+.add-form {
+  margin-bottom: 32px;
+}
+
+.add-form div {
   margin-bottom: 12px;
 }
 
@@ -256,16 +277,31 @@ input {
   margin-left: 8px;
 }
 
-ul {
-  margin-top: 8px;
-  margin-bottom: 16px;
+button {
+  cursor: pointer;
 }
 
-li {
+.suggestions {
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.suggestions li {
   margin-bottom: 6px;
 }
 
-button {
-  cursor: pointer;
+.selected-movie {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.selected-poster {
+  width: 100px;
+  border-radius: 8px;
 }
 </style>
