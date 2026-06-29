@@ -9,6 +9,8 @@ const EXTERNAL_MOVIES_URL = 'https://movie-watchlist-backend-vao3.onrender.com/e
 const movies = ref([])
 const movieSearch = ref('')
 const suggestions = ref([])
+let searchTimeout = null
+let latestSearchId = 0
 
 const newMovie = ref({
   title: '',
@@ -39,26 +41,41 @@ const loadMovies = async () => {
   }
 }
 
-const searchExternalMovies = async () => {
+const searchExternalMovies = () => {
   const query = movieSearch.value.trim()
 
-  if (query.length < 2) {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
+  if (query.length < 3) {
     suggestions.value = []
     return
   }
 
-  try {
-    const response = await axios.get(`${EXTERNAL_MOVIES_URL}/search`, {
-      params: {
-        title: query
-      }
-    })
+  searchTimeout = setTimeout(async () => {
+    const searchId = ++latestSearchId
 
-    suggestions.value = response.data
-  } catch (error) {
-    console.error('Fehler bei der Filmsuche:', error)
-    suggestions.value = []
-  }
+    try {
+      const response = await axios.get(`${EXTERNAL_MOVIES_URL}/search`, {
+        params: {
+          title: query
+        }
+      })
+
+      if (searchId !== latestSearchId) {
+        return
+      }
+
+      suggestions.value = response.data
+    } catch (error) {
+      console.error('Fehler bei der Filmsuche:', error)
+
+      if (searchId === latestSearchId) {
+        suggestions.value = []
+      }
+    }
+  }, 250)
 }
 
 const selectSuggestion = async (suggestion) => {
