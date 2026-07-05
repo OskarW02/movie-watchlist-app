@@ -12,6 +12,7 @@ const emit = defineEmits(['delete-movie', 'update-movie'])
 
 const commentDrafts = reactive({})
 const ratingDrafts = reactive({})
+const commentSaveTimeouts = {}
 
 watch(
   () => props.movies,
@@ -60,11 +61,17 @@ function saveRating(movie) {
   })
 }
 
-function saveComment(movie) {
-  emit('update-movie', {
-    ...movie,
-    comment: commentDrafts[movie.id] || ''
-  })
+function autoSaveComment(movie) {
+  if (commentSaveTimeouts[movie.id]) {
+    clearTimeout(commentSaveTimeouts[movie.id])
+  }
+
+  commentSaveTimeouts[movie.id] = setTimeout(() => {
+    emit('update-movie', {
+      ...movie,
+      comment: commentDrafts[movie.id] || ''
+    })
+  }, 700)
 }
 </script>
 
@@ -149,13 +156,12 @@ function saveComment(movie) {
             <textarea
               v-model="commentDrafts[movie.id]"
               placeholder="Kommentar schreiben..."
+              @input="autoSaveComment(movie)"
             ></textarea>
 
-            <br>
-
-            <button @click="saveComment(movie)">
-              Kommentar speichern
-            </button>
+            <p class="autosave-hint">
+              Kommentar wird automatisch gespeichert.
+            </p>
           </div>
 
           <button @click="toggleWatched(movie)">
