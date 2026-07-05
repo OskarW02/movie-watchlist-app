@@ -158,10 +158,6 @@ function autoSaveComment(movie) {
               placeholder="Kommentar schreiben..."
               @input="autoSaveComment(movie)"
             ></textarea>
-
-            <p class="autosave-hint">
-              Kommentar wird automatisch gespeichert.
-            </p>
           </div>
 
           <button @click="toggleWatched(movie)">
